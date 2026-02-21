@@ -1,5 +1,7 @@
 # ✍️ SCRIBE | Engineering Grade Markdown Engine
 
+> **Live Demo:** [cicicdamir.github.io/SCRIBE-ENGINE/](https://cicicdamir.github.io/SCRIBE-ENGINE/)
+
 A high-performance, zero-dependency Markdown parser and live-preview editor. Built with vanilla JavaScript, focusing on regex-based parsing and secure DOM manipulation.
 
 ## ⚙️ Technical Architecture: The Parser
