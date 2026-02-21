@@ -1,0 +1,11 @@
+# Force Linguist to document all languages in the monolith
+index.html linguist-detectable=true
+index.html linguist-documentation=false
+
+# Explicit language mapping for the repository bar
+*.html linguist-detectable=true
+*.css linguist-detectable=true
+*.js linguist-detectable=true
+
+# Treat the file as a mix of web technologies
+index.html linguist-language=HTML
