@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scribe | Engineering Grade</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --ui-light: #f6f8fa;
+            --border: #d0d7de;
+            --text-main: #1f2328;
+            --accent: #0969da;
+            --code-bg: #0d1117; 
+            --code-text: #e6edf3;
+            --success: #2da44e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        header {
+            height: 50px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; border-bottom: 1px solid var(--border);
+            background: #fff; z-index: 10;
+        }
+
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1rem; }
+        .logo { background: #000; color: #fff; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-style: italic; font-size: 14px; }
+
+        .btn-group { display: flex; gap: 8px; }
+        .btn {
+            padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+            cursor: pointer; border: 1px solid var(--border); transition: 0.1s; background: #fff;
+        }
+        .btn-dark { background: #21262d; color: #fff; border: none; }
+        .btn-dark:hover { background: #000; }
+
+        main { flex: 1; display: flex; overflow: hidden; }
+        .pane { flex: 1; display: flex; flex-direction: column; }
+        .pane-meta {
+            background: var(--ui-light); padding: 5px 16px; font-size: 9px;
+            font-weight: 800; text-transform: uppercase; color: #656d76;
+            border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;
+        }
+
+        textarea {
+            flex: 1; padding: 20px; border: none; resize: none; outline: none;
+            font-family: "SFMono-Regular", Consolas, monospace; font-size: 13px; line-height: 1.6;
+        }
+
+        #preview { flex: 1; padding: 30px 40px; overflow-y: auto; background: #fff; }
+
+        .prose { font-size: 15px; line-height: 1.6; }
+        .prose h1 { font-size: 2em; font-weight: 700; margin: 0.5em 0; border-bottom: 1px solid var(--border); padding-bottom: 0.2em; }
+        .prose h2 { font-size: 1.4em; font-weight: 600; margin: 1em 0 0.5em; border-bottom: 1px solid var(--border); padding-bottom: 0.2em; }
+        .prose p { margin-bottom: 14px; }
+        .prose blockquote { border-left: 4px solid var(--border); padding: 0 15px; color: #656d76; margin-bottom: 14px; }
+
+        .code-wrap { 
+            position: relative; 
+            margin: 16px 0; 
+            background: var(--code-bg); 
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .prose pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 18px;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 0;
+            border: none;
+        }
+        .prose code { background: #afb8c133; padding: 0.2em 0.4em; border-radius: 4px; font-size: 85%; }
+        .prose pre code { background: none; padding: 0; font-size: inherit; display: block; }
+
+        .copy-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(255,255,255,0.05); color: #fff;
+            border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px;
+            border-radius: 4px; font-size: 9px; font-weight: 700;
+            cursor: pointer; opacity: 0; transition: 0.2s;
+        }
+        .code-wrap:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { background: var(--accent); }
+
+        .prose table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+        .prose th, .prose td { border: 1px solid var(--border); padding: 8px 12px; }
+        .prose th { background: var(--ui-light); }
+
+        footer {
+            height: 25px; background: var(--ui-light); border-top: 1px solid var(--border);
+            padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+            font-size: 10px; font-weight: 600; color: #656d76;
+        }
+        .status { color: var(--success); display: flex; align-items: center; gap: 5px; }
+        .dot { width: 5px; height: 5px; background: var(--success); border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand"><div class="logo">S</div> SCRIBE</div>
+        <div class="btn-group">
+            <button class="btn" onclick="location.reload()">RESET</button>
+            <button class="btn btn-dark" onclick="downloadDoc()">DOWNLOAD .MD</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="pane" style="border-right: 1px solid var(--border);">
+            <div class="pane-meta">Markdown Source</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+        </div>
+        <div class="pane">
+            <div class="pane-meta">Live Preview</div>
+            <div id="preview" class="prose"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="status"><div class="dot"></div> PROTECTED ENGINE</div>
+        <div id="stats">0 CHARS</div>
+    </footer>
+
+    <script>
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        const stats = document.getElementById('stats');
+
+        // POPRAVLJENO: Korišćenje backticks (`) za multiline string
+        const initialDoc = `# 🚀 Scribe Core Inženjerski Test
+
+Ovo je provera za **Scribe v2.3**. Engine koristi placeholder arhitekturu kako bi osigurao da kôd ostane čist.
+
+## 🛠️ Tehnička Specifikacija
+| Modul | Status | Tehnologija |
+| :--- | :--- | :--- |
+| Parser | Aktivan | Vanilla JS |
+| Security | Sandbox | DOMParser |
+
+### 💻 Monolitni Code Block
+\`\`\`javascript
+function initializeCore() {
+  const engine = "Scribe v2.3";
+  console.log(\`Engine status: Production Ready\`);
+  return { secure: true, fast: true };
+}
+\`\`\``;
+
+        editor.value = localStorage.getItem('scribe_v23') || initialDoc;
+
+        function purifier(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            div.querySelectorAll('script, iframe, object, embed').forEach(el => el.remove());
+            div.querySelectorAll('*').forEach(el => {
+                for (let i = el.attributes.length - 1; i >= 0; i--) {
+                    if (el.attributes[i].name.startsWith('on')) el.removeAttribute(el.attributes[i].name);
+                }
+            });
+            return div.innerHTML;
+        }
+
+        function parse(text) {
+            let res = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            const codeBlocks = [];
+            res = res.replace(/```([\s\S]*?)```/gim, (match, code) => {
+                const id = `__CODE_BLOCK_${codeBlocks.length}__`;
+                const cleanCode = code.replace(/^[a-z]+\n/i, '').trim();
+                codeBlocks.push(`<div class="code-wrap">
+                                    <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+                                    <pre><code>${cleanCode}</code></pre>
+                                </div>`);
+                return id;
+            });
+
+            res = res.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            res = res.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            res = res.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            res = res.replace(/^&gt; (.*$)/gim, '<blockquote>$1</blockquote>');
+
+            res = res.replace(/\|(.+)\|/gim, (match, content) => {
+                const cells = content.split('|').filter(c => c.trim() !== "").map(c => `<td>${c.trim()}</td>`).join('');
+                return `<table><tr>${cells}</tr></table>`;
+            });
+            res = res.replace(/<\/table>\s*<table>/gim, '');
+
+            res = res.replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>');
+            res = res.replace(/\*(.*)\*/gim, '<em>$1</em>');
+            res = res.replace(/`(.*?)`/gim, '<code>$1</code>');
+            res = res.replace(/^\- (.*$)/gim, '<li>$1</li>');
+
+            res = res.replace(/\n/gim, '<br />');
+
+            codeBlocks.forEach((block, i) => {
+                res = res.replace(`__CODE_BLOCK_${i}__`, block);
+            });
+
+            return purifier(res);
+        }
+
+        function refresh() {
+            preview.innerHTML = parse(editor.value);
+            stats.innerText = `${editor.value.length} CHARS`;
+            localStorage.setItem('scribe_v23', editor.value);
+        }
+
+        window.copyCode = function(btn) {
+            const code = btn.nextElementSibling.innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerText = "DONE!";
+                setTimeout(() => btn.innerText = "COPY", 2000);
+            });
+        };
+
+        // DODATO: Funkcija za download koja je nedostajala
+        window.downloadDoc = function() {
+            const blob = new Blob([editor.value], { type: 'text/markdown' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `scribe_export.md`;
+            a.click();
+        };
+
+        editor.addEventListener('input', refresh);
+        refresh();
+    </script>
+</body>
+</html>
